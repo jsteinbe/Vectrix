@@ -63,7 +63,7 @@ public class GuessDialog extends JDialog {
 			ClueGame game;
 			boolean isAccusation;
 			GuessDialog gd;
-			ControlBottomPanel bottom;
+			ControlBottomPanel bottomPanel;
 			Solution solution;
 			
 			public SubmitButtonListener(ClueGame game, boolean isAccusation, GuessDialog gd, ControlBottomPanel bottom) {
@@ -71,7 +71,7 @@ public class GuessDialog extends JDialog {
 				this.game = game;
 				this.isAccusation = isAccusation;
 				this.gd = gd;
-				this.bottom = bottom;
+				this.bottomPanel = bottom;
 				
 			}
 			public void actionPerformed(ActionEvent e) {
@@ -88,12 +88,13 @@ public class GuessDialog extends JDialog {
 							"Weapon: " + gd.weaponList.getSelectedItem() + "Room: " + 
 							gd.roomName);
 					solution = new Solution((String) gd.playerList.getSelectedItem(),(String) gd.weaponList.getSelectedItem(), gd.roomName);
-					bottom.setGuess(solution);
+					bottomPanel.setGuess(solution);
 					if (game.getResponse() != null) {
 						System.out.println("Hello");
-						bottom.setResponse(game.getResponse().getName());
+						bottomPanel.setResponse(game.getResponse().getName());
+						System.out.println(game.getResponse().getName());
 					} else {
-						bottom.setResponse("No new card");
+						bottomPanel.setResponse("No new card");
 					}
 					dispose();
 				}

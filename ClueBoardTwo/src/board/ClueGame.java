@@ -394,4 +394,8 @@ public class ClueGame {
 	public void setCurrentGuess(Solution guess) {
 		currGuess = guess;
 	}
+	
+	public GUI getFrame() {
+		return frame;
+	}
 }
