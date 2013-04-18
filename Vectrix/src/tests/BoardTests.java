@@ -15,7 +15,7 @@ public class BoardTests {
 		board = new Board();
 	}
 	
-	//Testing the solution.
+	////// SOLUTION TESTS //////
 
 	@Test
 	public void testConnectionsPerNode() {
@@ -84,6 +84,10 @@ public class BoardTests {
 		}
 	}
 	
+	////// END SOLUTION TESTS //////
+	
+	////// INTERACTION TESTS //////
+	
 	@Test
 	public void firstNodeAddSelected() {
 		Node toClick = board.getNodes().get(0);
@@ -108,4 +112,6 @@ public class BoardTests {
 		}
 		assertTrue(foundConnection);
 	}
+	
+	////// END INTERACTION TESTS //////
 }
