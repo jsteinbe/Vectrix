@@ -124,7 +124,7 @@ public class BoardTests {
 	}
 	
 	@Test
-	public void testDeselectAddedNode() {
+	public void deselectAddSelectedNode() {
 		Node clicked = board.getNodes().get(0);
 		clicked.setSelected(selectType.ADD);
 		board.nodeLeftClicked(clicked);
@@ -157,6 +157,34 @@ public class BoardTests {
 		assertTrue(toClick.getSelected() == selectType.NONE);
 	}
 	
+	@Test
+	public void deletionOfConnection() {
+		Node toClick = new Node();
+		Node otherNode = new Node();
+		toClick.setSelected(selectType.NONE);
+		otherNode.setSelected(selectType.DELETE);
+		Connection firstConnection = new Connection(toClick, otherNode);
+		board.getConnections().add(firstConnection);
+		board.nodeRightClicked(toClick);
+		assertFalse(board.getConnections().contains(firstConnection));
+	}
 	
+	@Test
+	public void deselectDeleteSelectedNode() {
+		Node toClick = board.getNodes().get(0);
+		toClick.setSelected(selectType.DELETE);
+		board.nodeRightClicked(toClick);
+		assertTrue(toClick.getSelected() == selectType.NONE);
+	}
+	
+	@Test
+	public void rightClickOnLeftClickedNode() {
+		Node toClick = board.getNodes().get(0);
+		toClick.setSelected(selectType.ADD);
+		board.nodeRightClicked(toClick);
+		assertTrue(toClick.getSelected() == selectType.ADD);
+	}
 	////// END INTERACTION TESTS //////
+	
+	//Checks to see if the solution i
 }
