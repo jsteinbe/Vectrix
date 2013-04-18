@@ -84,12 +84,22 @@ public class BoardTests {
 		}
 	}
 	
+	@Test
+	public void nodesOfAllConnectionsAreAdjacent() {
+		Node node1 = new Node(), node2 = new Node();
+		for (Connection connection : board.getSolution().getConnections()) {
+			node1 = connection.getAttached().get(0);
+			node2 = connection.getAttached().get(1);
+			assertTrue(board.areAdjacent(node1, node2));
+		}
+	}
+	
 	////// END SOLUTION TESTS //////
 	
 	////// INTERACTION TESTS //////
 	
 	@Test
-	public void firstNodeAddSelected() {
+	public void nodeSelectedToAdd() {
 		Node toClick = board.getNodes().get(0);
 		toClick.setSelected(selectType.NONE);
 		board.nodeLeftClicked(toClick);
@@ -112,6 +122,41 @@ public class BoardTests {
 		}
 		assertTrue(foundConnection);
 	}
+	
+	@Test
+	public void testDeselectAddedNode() {
+		Node clicked = board.getNodes().get(0);
+		clicked.setSelected(selectType.ADD);
+		board.nodeLeftClicked(clicked);
+		assertTrue(clicked.getSelected() == selectType.NONE);
+	}
+	
+	@Test
+	public void leftClickOnRightClickedNode() {
+		Node deleteSelected = board.getNodes().get(0);
+		deleteSelected.setSelected(selectType.DELETE);
+		board.nodeLeftClicked(deleteSelected);
+		assertTrue(deleteSelected.getSelected() == selectType.DELETE);
+	}
+	
+	@Test
+	public void nodePartOfConnectionSelectedToDelete() {
+		Node toClick = new Node();
+		Node otherNode = new Node();
+		toClick.setSelected(selectType.NONE);
+		Connection firstConnection = new Connection(toClick, otherNode);
+		board.nodeRightClicked(toClick);
+		assertTrue(toClick.getSelected() == selectType.DELETE);
+	}
+	
+	@Test
+	public void nodeNotPartOfConnectionSelectedToDelete() {
+		Node toClick = board.getNodes().get(0);
+		toClick.setSelected(selectType.NONE);
+		board.nodeRightClicked(toClick);
+		assertTrue(toClick.getSelected() == selectType.NONE);
+	}
+	
 	
 	////// END INTERACTION TESTS //////
 }

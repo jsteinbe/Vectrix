@@ -5,11 +5,12 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Node {
+	public enum selectType {ADD, DELETE, NONE};
+	
 	private int x;
 	private int y;
 	private Color color;
 	private DrawType type;
-	public enum selectType {ADD, DELETE, NONE};
 	private selectType selected;
 	private ArrayList<Node> connections;
 	
