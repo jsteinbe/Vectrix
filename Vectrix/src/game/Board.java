@@ -42,6 +42,10 @@ public class Board extends JPanel{
 		return new ArrayList<Node>();
 	}
 	
+	public ArrayList<Path> getPaths() {
+		return new ArrayList<Path>();
+	}
+	
 	public Solution getSolution() {
 		return new Solution();
 	}

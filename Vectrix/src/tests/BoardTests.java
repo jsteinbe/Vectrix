@@ -65,7 +65,22 @@ public class BoardTests {
 	
 	@Test
 	public void correctNumberOfPaths() {
-		
+		int oneConnectionNodes = 0;
+		for ( Node node : board.getSolution().getNodes() ) {
+			if ( node.isArrow() || node.isCircle() ) {
+				oneConnectionNodes++;
+			}
+		}
+		assertTrue(board.getPaths().size() == (oneConnectionNodes/2));
+	}
+	
+	@Test
+	public void noOneConnectionPaths() {
+		for ( Connection connection : board.getSolution().getConnections()) {
+			Node node1 = connection.getAttached().get(0);
+			Node node2 = connection.getAttached().get(1);
+			assertFalse(( node1.isCircle() && node2.isArrow() ) || ( node2.isCircle() && node1.isArrow() ));
+		}
 	}
 
 }
