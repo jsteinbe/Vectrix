@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.Assert.*;
 import game.*;
+import game.Node.selectType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -82,5 +83,29 @@ public class BoardTests {
 			assertFalse(( node1.isCircle() && node2.isArrow() ) || ( node2.isCircle() && node1.isArrow() ));
 		}
 	}
-
+	
+	@Test
+	public void firstNodeAddSelected() {
+		Node toClick = board.getNodes().get(0);
+		toClick.setSelected(selectType.NONE);
+		board.nodeLeftClicked(toClick);
+		assertTrue(toClick.getSelected() == selectType.ADD);
+	}
+	
+	@Test
+	public void createConnection() {
+		Node toClick = board.getNodes().get(0);
+		Node selected = board.getNodes().get( board.getAdjMtx().get(0).get(0) );
+		int numOfConnections = board.getConnections().size();
+		board.nodeLeftClicked(toClick);
+		assertTrue(board.getConnections().size() == (numOfConnections + 1));
+		boolean foundConnection = false;
+		for (Connection connection : board.getConnections() ) {
+			if (connection.getAttached().contains(toClick) && connection.getAttached().contains(selected) ) {
+				foundConnection = true;
+				break;
+			}
+		}
+		assertTrue(foundConnection);
+	}
 }
