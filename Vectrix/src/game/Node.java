@@ -5,11 +5,13 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Node {
+	public enum selectType {ADD, DELETE, NONE};
+	
 	private int x;
 	private int y;
 	private Color color;
 	private DrawType type;
-	private boolean selected;
+	private selectType selected;
 	private ArrayList<Node> connections;
 	
 	public Node() {
@@ -38,5 +40,13 @@ public class Node {
 	
 	public void draw( Graphics g ) {
 		
+	}
+	
+	public void setSelected( selectType type) {
+		selected = type;
+	}
+	
+	public selectType getSelected () {
+		return selected;
 	}
 }

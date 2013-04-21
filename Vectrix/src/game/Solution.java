@@ -14,4 +14,7 @@ public class Solution {
 		return new ArrayList<Node>();
 	}
 	
+	public ArrayList<Connection> getConnections() {
+		return new ArrayList<Connection>();
+	}
 }
