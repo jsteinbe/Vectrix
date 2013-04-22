@@ -19,7 +19,7 @@ public class Connection {
 	}
 	
 	public ArrayList<Node> getAttached() {
-		return new ArrayList<Node>();
+		return attached;
 	}
 
 	public void draw(Graphics g) {

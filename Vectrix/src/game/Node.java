@@ -7,15 +7,22 @@ import java.util.ArrayList;
 public class Node {
 	public enum selectType {ADD, DELETE, NONE};
 	
-	private int x;
-	private int y;
+	private int row;
+	private int col;
 	private Color color;
 	private DrawType type;
 	private selectType selected;
 	private ArrayList<Node> connections;
+	private LineSet lineSet;
+	
+	public Node(int row, int col) {
+		this.row = row;
+		this.col = col;
+		connections = new ArrayList<Node>();
+	}
 	
 	public Node() {
-		
+		connections = new ArrayList<Node>();
 	}
 	
 	public ArrayList<Node> getConnections() {
@@ -48,5 +55,21 @@ public class Node {
 	
 	public selectType getSelected () {
 		return selected;
+	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getCol() {
+		return col;
+	}
+
+	public LineSet getLineSet() {
+		return lineSet;
+	}
+
+	public void setLineSet(LineSet lineSet) {
+		this.lineSet = lineSet;
 	}
 }
