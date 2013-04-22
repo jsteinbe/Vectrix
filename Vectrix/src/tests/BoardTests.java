@@ -185,6 +185,4 @@ public class BoardTests {
 		assertTrue(toClick.getSelected() == selectType.ADD);
 	}
 	////// END INTERACTION TESTS //////
-	
-	//Checks to see if the solution i
 }

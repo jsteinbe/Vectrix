@@ -26,7 +26,7 @@ public class Node {
 	}
 	
 	public ArrayList<Node> getConnections() {
-		return new ArrayList<Node>();
+		return connections;
 	}
 	
 	public DrawType getType() {
@@ -72,4 +72,10 @@ public class Node {
 	public void setLineSet(LineSet lineSet) {
 		this.lineSet = lineSet;
 	}
+
+	public void setType(DrawType type) {
+		this.type = type;
+	}
+	
+	
 }

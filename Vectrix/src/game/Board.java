@@ -30,8 +30,10 @@ public class Board extends JPanel{
 		solution = new Solution();
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numRows; j++) {
-				nodes.add(new Node(i, j));
-				solution.getNodes().add(new Node(i, j));
+				Node node = new Node(i,j);
+				node.setType(DrawType.DOT);
+				nodes.add(node);
+				solution.getNodes().add(node);
 			}
 		}
 		calcAdjacencies();

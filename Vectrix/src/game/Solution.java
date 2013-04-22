@@ -7,14 +7,15 @@ public class Solution {
 	private ArrayList<Node> nodes;
 	
 	public Solution() {
-		
+		connections = new ArrayList<Connection>();
+		nodes = new ArrayList<Node>();
 	}
 	
 	public ArrayList<Node> getNodes() {
-		return new ArrayList<Node>();
+		return nodes;
 	}
 	
 	public ArrayList<Connection> getConnections() {
-		return new ArrayList<Connection>();
+		return connections;
 	}
 }
