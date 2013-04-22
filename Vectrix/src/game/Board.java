@@ -26,6 +26,15 @@ public class Board extends JPanel{
 		selectedNode = null;
 		numRows = 10;
 		numCols = 10;
+////// THIS WILL BE DIFFERENT, JUST GETS THE TESTS TO COMPILE //////
+		solution = new Solution();
+		for (int i = 0; i < numRows; i++) {
+			for (int j = 0; j < numRows; j++) {
+				nodes.add(new Node(i, j));
+				solution.getNodes().add(new Node(i, j));
+			}
+		}
+		calcAdjacencies();
 		generateSolution();
 		generatePaths();
 	}
@@ -123,11 +132,7 @@ public class Board extends JPanel{
 	}
 	
 	public void generateSolution() {
-		for (int i = 0; i < numRows; i++) {
-			for (int j = 0; j < numRows; j++) {
-				nodes.add(new Node(i, j));
-			}
-		}
+
 	}
 	
 	public void generatePaths() {
@@ -203,23 +208,24 @@ public class Board extends JPanel{
 	}
 	
 	public DrawType checkNodeDirection ( Node nodeOne, Node nodeTwo ) {
+		////// NEEDS IMPLEMENTATION //////
 		return DrawType.DOT;
 	}
 	
 	public boolean areAdjacent( Node node1, Node node2 ) {
-		return false;
+		return adjMtx.get(calcIndex(node1.getRow(),node2.getCol())).contains(calcIndex(node2.getRow(), node2.getCol()));
 	}
 	
 	public ArrayList<Node> getNodes() {
-		return new ArrayList<Node>();
+		return nodes;
 	}
 	
 	public ArrayList<Path> getPaths() {
-		return new ArrayList<Path>();
+		return paths;
 	}
 	
 	public Solution getSolution() {
-		return new Solution();
+		return solution;
 	}
 
 	public Map<Integer, LinkedList<Integer>> getAdjMtx() {
