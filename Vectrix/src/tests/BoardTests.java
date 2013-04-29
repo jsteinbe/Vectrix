@@ -36,6 +36,9 @@ public class BoardTests {
 	@Test
 	public void allNodesHaveConnections() {
 		for ( Node node : board.getSolution().getNodes() ) {
+			System.out.println("Node's Connections: " + node.getConnections());
+		}
+		for ( Node node : board.getSolution().getNodes() ) {
 			assertTrue(node.getConnections().size() != 0);
 		}
 	}
@@ -49,7 +52,6 @@ public class BoardTests {
 			if ( node.isArrow() ) arrowCount++;
 			if ( node.isCircle() ) circleCount++;
 		}
-		
 		assertTrue(arrowCount == circleCount);
 	}
 	
@@ -72,25 +74,15 @@ public class BoardTests {
 				oneConnectionNodes++;
 			}
 		}
-		assertTrue(board.getPaths().size() == (oneConnectionNodes/2));
-	}
-	
-	@Test
-	public void noOneConnectionPaths() {
-		for ( Connection connection : board.getSolution().getConnections()) {
-			Node node1 = connection.getAttached().get(0);
-			Node node2 = connection.getAttached().get(1);
-			assertFalse(( node1.isCircle() && node2.isArrow() ) || ( node2.isCircle() && node1.isArrow() ));
-		}
+		assertTrue(board.getSolution().getLineSets().size() == (oneConnectionNodes/2));
 	}
 	
 	@Test
 	public void nodesOfAllConnectionsAreAdjacent() {
-		Node node1 = new Node(), node2 = new Node();
-		for (Connection connection : board.getSolution().getConnections()) {
-			node1 = connection.getAttached().get(0);
-			node2 = connection.getAttached().get(1);
-			assertTrue(board.areAdjacent(node1, node2));
+		for ( Node node : board.getSolution().getNodes() ) {
+			for (Node adj : node.getConnections() ) {
+				assertTrue(board.areAdjacent(node, adj));
+			}
 		}
 	}
 	
@@ -110,17 +102,12 @@ public class BoardTests {
 	public void createConnection() {
 		Node toClick = board.getNodes().get(0);
 		Node selected = board.getNodes().get( board.getAdjMtx().get(0).get(0) );
-		int numOfConnections = board.getConnections().size();
+		board.setSelectedNode(selected);
+		toClick.setSelected(selectType.NONE);
+		selected.setSelected(selectType.ADD);
 		board.nodeLeftClicked(toClick);
-		assertTrue(board.getConnections().size() == (numOfConnections + 1));
-		boolean foundConnection = false;
-		for (Connection connection : board.getConnections() ) {
-			if (connection.getAttached().contains(toClick) && connection.getAttached().contains(selected) ) {
-				foundConnection = true;
-				break;
-			}
-		}
-		assertTrue(foundConnection);
+		assertTrue(toClick.getConnections().contains(selected));
+		assertTrue(selected.getConnections().contains(toClick));
 	}
 	
 	@Test
@@ -144,14 +131,15 @@ public class BoardTests {
 		Node toClick = new Node();
 		Node otherNode = new Node();
 		toClick.setSelected(selectType.NONE);
-		Connection firstConnection = new Connection(toClick, otherNode);
+		board.addConnection(toClick, otherNode);
 		board.nodeRightClicked(toClick);
 		assertTrue(toClick.getSelected() == selectType.DELETE);
 	}
 	
 	@Test
 	public void nodeNotPartOfConnectionSelectedToDelete() {
-		Node toClick = board.getNodes().get(0);
+		//Node toClick = board.getNodes().get(0);
+		Node toClick = new Node();
 		toClick.setSelected(selectType.NONE);
 		board.nodeRightClicked(toClick);
 		assertTrue(toClick.getSelected() == selectType.NONE);
@@ -159,20 +147,23 @@ public class BoardTests {
 	
 	@Test
 	public void deletionOfConnection() {
-		Node toClick = new Node();
-		Node otherNode = new Node();
+		Node toClick = board.getNodes().get(0);
+		Node otherNode = board.getNodes().get( board.getAdjMtx().get(0).get(0));
 		toClick.setSelected(selectType.NONE);
 		otherNode.setSelected(selectType.DELETE);
-		Connection firstConnection = new Connection(toClick, otherNode);
-		board.getConnections().add(firstConnection);
+		board.setSelectedNode(otherNode);
+		board.updateLineSetsAdd(board.getLineSets(), toClick, otherNode);
+		board.addConnection(toClick, otherNode);
 		board.nodeRightClicked(toClick);
-		assertFalse(board.getConnections().contains(firstConnection));
+		assertFalse(toClick.getConnections().contains(otherNode));
+		assertFalse(otherNode.getConnections().contains(toClick));
 	}
 	
 	@Test
 	public void deselectDeleteSelectedNode() {
 		Node toClick = board.getNodes().get(0);
 		toClick.setSelected(selectType.DELETE);
+		board.setSelectedNode(toClick);
 		board.nodeRightClicked(toClick);
 		assertTrue(toClick.getSelected() == selectType.NONE);
 	}
@@ -185,6 +176,4 @@ public class BoardTests {
 		assertTrue(toClick.getSelected() == selectType.ADD);
 	}
 	////// END INTERACTION TESTS //////
-	
-	//Checks to see if the solution i
 }

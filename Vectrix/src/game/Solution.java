@@ -3,18 +3,24 @@ package game;
 import java.util.ArrayList;
 
 public class Solution {
-	private ArrayList<Connection> connections;
 	private ArrayList<Node> nodes;
+	private ArrayList<LineSet> lineSets;
 	
 	public Solution() {
-		
+		lineSets = new ArrayList<LineSet>();
+		nodes = new ArrayList<Node>();
+	}
+	
+	public Solution(ArrayList<LineSet> lineSets, ArrayList<Node> nodes) {
+		this.lineSets = lineSets;
+		this.nodes = nodes;
 	}
 	
 	public ArrayList<Node> getNodes() {
-		return new ArrayList<Node>();
+		return nodes;
 	}
 	
-	public ArrayList<Connection> getConnections() {
-		return new ArrayList<Connection>();
+	public ArrayList<LineSet> getLineSets() {
+		return lineSets;
 	}
 }
