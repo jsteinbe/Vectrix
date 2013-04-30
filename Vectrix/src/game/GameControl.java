@@ -28,9 +28,7 @@ import javax.swing.border.Border;
 
 public class GameControl extends JFrame {
 	private Board board;
-	private boolean newPuzzle = false;
 	private JButton giveUpButton;
-	private JFrame self = this;	
 	
 	public GameControl() throws IOException {
 		setSize(760, 740);
@@ -49,6 +47,7 @@ public class GameControl extends JFrame {
 		}
 		setVisible(true);
 	}
+	
 	
 	public void createPathsPanel() throws IOException {
 		JPanel pathPanel = new JPanel();
@@ -81,17 +80,9 @@ public class GameControl extends JFrame {
 		giveUpButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e){
-					if (!newPuzzle) {
-						board.reset();
-						board.setDrawSolution(true);
-						newPuzzle = true;
-						/////////////////////FINISH CHANGING IMAGE OF GIVEUPBUTTON//////////////////////////////////
-						board.repaint();
-					} else {
-						board.newPuzzle();
-						newPuzzle = false;
-						board.repaint();
-					}
+					board.reset();
+					board.setDrawSolution(true);
+					board.repaint();
 				}
 			}
 		);
@@ -136,6 +127,10 @@ public class GameControl extends JFrame {
 		add(buttons, BorderLayout.SOUTH);
 	}
 	
+	public Board getBoard() {
+		return board;
+	}
+	
 	public void createLogo() throws IOException {
 		JPanel logo = new JPanel();
 		logo.setBackground(Color.BLACK);
@@ -145,13 +140,5 @@ public class GameControl extends JFrame {
 		logo.add(icon);
 		add(logo, BorderLayout.NORTH);
 	}
-	
-	public static void main(String[] args) {
-		try {
-			GameControl game = new GameControl();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 }

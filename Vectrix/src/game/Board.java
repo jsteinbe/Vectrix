@@ -41,6 +41,8 @@ public class Board extends JPanel{
 	private final int MAX_NUM_PATH_ARROWS = 11;
 	private boolean drawSolution = false;
 	private ArrayList<ArrayList<Node>> hints;
+	private boolean showCongratsMessage = false;
+	private boolean newGame = false;
 	
 	public Board() {
 		drawSolution = false;
@@ -110,10 +112,19 @@ public class Board extends JPanel{
 				}
 			}
 		}
+		
+		showCongratsMessage = true;
+		
 		return true;
 	}
 	
 	public void nodeLeftClicked( Node node ) {
+		if (showCongratsMessage) {
+			showCongratsMessage = false;
+			newGame = true;
+			return;
+		}
+		
 		if ( node.getSelected() == Node.selectType.DELETE ) {
 			return;
 		} else if ( selectedNode != null ) {
@@ -175,6 +186,12 @@ public class Board extends JPanel{
 	}
 	
 	public void nodeRightClicked( Node node ) {
+		if (showCongratsMessage) {
+			showCongratsMessage = false;
+			newGame = true;
+			return;
+		}
+		
 		
 		if ( node.getSelected() == Node.selectType.ADD ) {
 			return;
@@ -491,11 +508,12 @@ public class Board extends JPanel{
 			colors.remove(randomNum);
 			return;
 		}
+		
 		set.setColor(Color.CYAN);
 		for (Node node : set.getNodes() ) {
 			node.setColor(set.getColor());
 		}
-		
+
 	}
 	
 	public void updateLineSetsAdd( ArrayList<LineSet> sets, Node node1, Node node2) {
@@ -883,6 +901,20 @@ public class Board extends JPanel{
 		} else {
 			paintPlayerInput(g);
 		}
+		
+		if ( showCongratsMessage ) {
+			try {
+				BufferedImage image;
+				image = ImageIO.read(this.getClass().getResource("/images/congratulations_message.png"));
+				g.drawImage(image, 16, 138, null);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		}
 	}
 	
 	public void paintPlayerInput(Graphics g) {
@@ -1001,8 +1033,8 @@ public class Board extends JPanel{
 		public void mouseReleased(MouseEvent arg0) {}
 	}
 	
-	public void newPuzzle() {
-		generateSolution(); 
+	public boolean getNewGame() {
+		return newGame;
 	}
 	
 	public void newHint() {
