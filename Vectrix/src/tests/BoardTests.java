@@ -36,9 +36,6 @@ public class BoardTests {
 	@Test
 	public void allNodesHaveConnections() {
 		for ( Node node : board.getSolution().getNodes() ) {
-			System.out.println("Node's Connections: " + node.getConnections());
-		}
-		for ( Node node : board.getSolution().getNodes() ) {
 			assertTrue(node.getConnections().size() != 0);
 		}
 	}
@@ -96,18 +93,6 @@ public class BoardTests {
 		toClick.setSelected(selectType.NONE);
 		board.nodeLeftClicked(toClick);
 		assertTrue(toClick.getSelected() == selectType.ADD);
-	}
-	
-	@Test
-	public void createConnection() {
-		Node toClick = board.getNodes().get(0);
-		Node selected = board.getNodes().get( board.getAdjMtx().get(0).get(0) );
-		board.setSelectedNode(selected);
-		toClick.setSelected(selectType.NONE);
-		selected.setSelected(selectType.ADD);
-		board.nodeLeftClicked(toClick);
-		assertTrue(toClick.getConnections().contains(selected));
-		assertTrue(selected.getConnections().contains(toClick));
 	}
 	
 	@Test

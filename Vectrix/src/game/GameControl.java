@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 
 
@@ -83,6 +84,15 @@ public class GameControl extends JFrame {
 					board.reset();
 					board.setDrawSolution(true);
 					board.repaint();
+					Timer t = new Timer(1400, new ActionListener() {
+			            public void actionPerformed(ActionEvent evt) {
+			                board.setShowNewGameMessage(true);
+			                board.initializeColors();
+			                board.repaint();
+			            }
+			        });
+					t.setRepeats(false);
+			        t.start();
 				}
 			}
 		);

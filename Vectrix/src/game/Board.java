@@ -42,6 +42,7 @@ public class Board extends JPanel{
 	private boolean drawSolution = false;
 	private ArrayList<ArrayList<Node>> hints;
 	private boolean showCongratsMessage = false;
+	private boolean showNewGameMessage = false;
 	private boolean newGame = false;
 	
 	public Board() {
@@ -125,6 +126,12 @@ public class Board extends JPanel{
 			return;
 		}
 		
+		if (showNewGameMessage) {
+			showNewGameMessage = false;
+			newGame = true;
+			return;
+		}
+		
 		if ( node.getSelected() == Node.selectType.DELETE ) {
 			return;
 		} else if ( selectedNode != null ) {
@@ -192,6 +199,11 @@ public class Board extends JPanel{
 			return;
 		}
 		
+		if (showNewGameMessage) {
+			showNewGameMessage = false;
+			newGame = true;
+			return;
+		}
 		
 		if ( node.getSelected() == Node.selectType.ADD ) {
 			return;
@@ -581,7 +593,6 @@ public class Board extends JPanel{
 				set.getNodes().remove(i);
 			}
 			colors.add(set.getColor());
-			System.out.println(set.getColor());
 			updateSetColor(newSet);
 			updateSetColor(set);
 			for (Node node : newSet.getNodes() ) {
@@ -911,9 +922,17 @@ public class Board extends JPanel{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-			
+		}
+		
+		if ( showNewGameMessage ) {
+			try {
+				BufferedImage image;
+				image = ImageIO.read(this.getClass().getResource("/images/newpuzzle_message.png"));
+				g.drawImage(image, 16, 178, null);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -1037,6 +1056,10 @@ public class Board extends JPanel{
 		return newGame;
 	}
 	
+	public void setShowNewGameMessage(boolean showNewGameMessage) {
+		this.showNewGameMessage = showNewGameMessage;
+	}
+
 	public void newHint() {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < solution.getNodes().size(); i++) {
