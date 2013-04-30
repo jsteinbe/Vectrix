@@ -125,7 +125,7 @@ public class Board extends JPanel{
 			newGame = true;
 			return;
 		}
-		
+
 		if (showNewGameMessage) {
 			showNewGameMessage = false;
 			newGame = true;
