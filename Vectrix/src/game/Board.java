@@ -1,10 +1,13 @@
 package game;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.List;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 public class Board extends JPanel{
 	private ArrayList<Color> colors;
@@ -36,6 +40,7 @@ public class Board extends JPanel{
 	private Map<String, Color> highlightColors;
 	private final int MAX_NUM_PATH_ARROWS = 11;
 	private boolean drawSolution = false;
+	private ArrayList<ArrayList<Node>> hints;
 	
 	public Board() {
 		drawSolution = false;
@@ -45,6 +50,7 @@ public class Board extends JPanel{
 		lineSets = new ArrayList<LineSet>();
 		adjMtx = new HashMap<Integer, LinkedList<Integer>>();
 		selectedNode = null;
+		hints = new ArrayList<ArrayList<Node>>();
 		numRows = 10;
 		numCols = 10;
 		minNumPaths = (int) Math.ceil(numRows*numCols/10);
@@ -69,7 +75,6 @@ public class Board extends JPanel{
 	
 	public void initializeColors() {
 		colors = new ArrayList<Color>();
-		colors.add(new Color(0,255,255));
 		colors.add(new Color(0,0,255));
 		colors.add(new Color(0,255,0));
 		colors.add(new Color(255,0,255));
@@ -85,6 +90,10 @@ public class Board extends JPanel{
 		colors.add(new Color(224,255,255));
 		colors.add(new Color(95,158,160));
 		colors.add(new Color(218,165,32));
+		colors.add(new Color(0, 153, 0));
+		colors.add(new Color(30, 144, 255));
+		colors.add(new Color(253, 188, 180));
+		Collections.shuffle(colors);
 	}
 	
 	public boolean checkSolution() {
@@ -101,7 +110,6 @@ public class Board extends JPanel{
 				}
 			}
 		}
-		JOptionPane.showMessageDialog(this, "You win!");
 		return true;
 	}
 	
@@ -112,16 +120,21 @@ public class Board extends JPanel{
 			if ( selectedNode.getSelected() == Node.selectType.DELETE ) {
 				return;
 			}
-		} /*else*/ if ( node.getSelected() == Node.selectType.ADD ) {
+		}
+		if ( node.getSelected() == Node.selectType.ADD ) {
 			selectedNode = null;
 			node.setSelected(Node.selectType.NONE);
 			return;
 		} else {
 			if (selectedNode == null) {
 				if (node.getConnections().size() < 2) {
-					selectedNode = node;
-					node.setSelected(Node.selectType.ADD);
-					return;
+					if (node.getConnections().size() == 1 && (node.isArrow() || node.isCircle())) {
+						return;
+					} else {
+						selectedNode = node;
+						node.setSelected(Node.selectType.ADD);
+						return;
+					}
 				}
 			} else {
 				int selectedIndex = calcIndex(selectedNode.getRow(), selectedNode.getCol());
@@ -169,7 +182,8 @@ public class Board extends JPanel{
 			if ( selectedNode.getSelected() == Node.selectType.ADD ) {
 				return;
 			}
-		} /*else*/ if ( node.getSelected() == Node.selectType.DELETE ) {
+		}
+		if ( node.getSelected() == Node.selectType.DELETE ) {
 			node.setSelected(Node.selectType.NONE);
 			selectedNode = null;
 			return;
@@ -351,7 +365,7 @@ public class Board extends JPanel{
 			}
 		}
 		
-		if (paths.size() > 15) {
+		if (paths.size() > 18) {
 			while (!solution.getNodes().isEmpty()) {
 				solution.getNodes().remove(0);
 			}
@@ -460,7 +474,7 @@ public class Board extends JPanel{
 	
 	public void updateSetColor(LineSet set) {
 		if (set.getNodes().get(0).isCircle() && set.getNodes().get(set.getNodes().size() - 1).isArrow() ) {
-			int randomNum = (int)(Math.random() * (colors.size() - 2)) + 1;
+			int randomNum = (int)(Math.random() * (colors.size() - 2));
 			set.setColor(colors.get(randomNum));
 			for (Node node : set.getNodes() ) {
 				node.setColor(colors.get(randomNum));
@@ -469,7 +483,7 @@ public class Board extends JPanel{
 			return;
 		}
 		if (set.getNodes().get(0).isArrow() && set.getNodes().get(set.getNodes().size() - 1).isCircle() ) {
-			int randomNum = (int)(Math.random() * (colors.size() - 2)) + 1;
+			int randomNum = (int)(Math.random() * (colors.size() - 2));
 			set.setColor(colors.get(randomNum));
 			for (Node node : set.getNodes() ) {
 				node.setColor(colors.get(randomNum));
@@ -477,7 +491,11 @@ public class Board extends JPanel{
 			colors.remove(randomNum);
 			return;
 		}
-		set.setColor(colors.get(0));
+		set.setColor(Color.CYAN);
+		for (Node node : set.getNodes() ) {
+			node.setColor(set.getColor());
+		}
+		
 	}
 	
 	public void updateLineSetsAdd( ArrayList<LineSet> sets, Node node1, Node node2) {
@@ -521,10 +539,14 @@ public class Board extends JPanel{
 			sets.remove(set);
 		} else if (node1.getConnections().size() > 0 && node2.getConnections().size() == 0) {
 			set.getNodes().remove(node2);
+			colors.add(set.getColor());
 			updateSetColor(set);
+			node2.setColor(Color.CYAN);
 		} else if (node1.getConnections().size() == 0 && node2.getConnections().size() > 0) {
 			set.getNodes().remove(node1);
+			colors.add(set.getColor());
 			updateSetColor(set);
+			node1.setColor(Color.CYAN);
 		} else {
 			// Split into two sets
 			int firstIndex = set.getNodes().indexOf(node1);
@@ -540,7 +562,8 @@ public class Board extends JPanel{
 			for (int i = splitIndex; i >= 0; i--) {
 				set.getNodes().remove(i);
 			}
-			
+			colors.add(set.getColor());
+			System.out.println(set.getColor());
 			updateSetColor(newSet);
 			updateSetColor(set);
 			for (Node node : newSet.getNodes() ) {
@@ -864,6 +887,8 @@ public class Board extends JPanel{
 	
 	public void paintPlayerInput(Graphics g) {
 		setBackground(Color.BLACK);
+		drawHints(g);
+		
 		for (LineSet set : lineSets) {
 			set.draw(g, this);
 		}
@@ -881,10 +906,10 @@ public class Board extends JPanel{
 	public void paintSolution(Graphics g) {
 		setBackground(Color.BLACK);
 		for (LineSet set : solution.getLineSets()) {
-			set.setColor(colors.get(1));
+			set.setColor(colors.get(0));
 			set.draw(g, this);
 			for ( Node node : set.getNodes() ) {
-				node.setColor(colors.get(1));
+				node.setColor(colors.get(0));
 				try {
 					node.draw(g, this);
 				} catch (IOException e) {
@@ -892,9 +917,35 @@ public class Board extends JPanel{
 					e.printStackTrace();
 				}
 			}
-			colors.remove(1);
+			colors.remove(0);
 		}
 	}
+	
+	
+	public void drawHints(Graphics g) {
+		for (ArrayList<Node> pair : hints) {
+			Node nodeOne = pair.get(0);
+			Node nodeTwo = pair.get(1);
+			g.setColor(new Color(120,120,120));
+			DrawType direction = checkNodeDirection(nodeTwo, nodeOne);
+			if (direction != DrawType.DOWNRIGHT && direction != DrawType.UPLEFT) {
+				g.drawLine(nodeOne.getCol()*50 + 28, nodeOne.getRow()*50 + 28, 
+						nodeTwo.getCol()*50 + 28, nodeTwo.getRow()*50 + 28);
+				g.drawLine(nodeOne.getCol()*50 + 29, nodeOne.getRow()*50 + 29, 
+						nodeTwo.getCol()*50 + 29, nodeTwo.getRow()*50 + 29);
+				g.drawLine(nodeOne.getCol()*50 + 32, nodeOne.getRow()*50 + 32, 
+						nodeTwo.getCol()*50 + 32, nodeTwo.getRow()*50 + 32);
+				g.drawLine(nodeOne.getCol()*50 + 33, nodeOne.getRow()*50 + 33, 
+						nodeTwo.getCol()*50 + 33, nodeTwo.getRow()*50 + 33);
+			} else {
+				g.drawLine(nodeOne.getCol()*50 + 32, nodeOne.getRow()*50 + 28, 
+						nodeTwo.getCol()*50 + 32, nodeTwo.getRow()*50 + 28);
+				g.drawLine(nodeOne.getCol()*50 + 28, nodeOne.getRow()*50 + 32, 
+						nodeTwo.getCol()*50 + 28, nodeTwo.getRow()*50 + 32);
+			}
+		}
+	}
+	
 	
 	public void setDrawSolution(boolean bool) {
 		drawSolution = bool;
@@ -943,23 +994,43 @@ public class Board extends JPanel{
 			}
 		}
 		
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {}
+		public void mouseEntered(MouseEvent arg0) {}
+		public void mouseExited(MouseEvent arg0) {}
+		public void mouseClicked(MouseEvent arg0) {}
+		public void mouseReleased(MouseEvent arg0) {}
+	}
+	
+	public void newPuzzle() {
+		generateSolution(); 
+	}
+	
+	public void newHint() {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i < solution.getNodes().size(); i++) {
+			indices.add(i);
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
+		Collections.shuffle(indices);
+		for (Integer i : indices) {
+			ArrayList<Node> playerNodes = nodes.get(i).getConnections();
+			ArrayList<Node> solutionNodes = solution.getNodes().get(i).getConnections();
+			for (Node n : solutionNodes) {
+				if (!playerNodes.contains(n)) {
+					boolean addHint = true;
+					ArrayList<Node> newHint = new ArrayList<Node>();
+					newHint.add(nodes.get(i));
+					newHint.add(n);
+					for (ArrayList<Node> prevHint : hints) {
+						if (prevHint.contains(newHint.get(0)) && prevHint.contains(newHint.get(1))) {
+							addHint = false;
+						}
+					}
+					if (addHint) {
+						hints.add(newHint);
+						return;
+					}
+				}
+			}
 		}
 	}
 }

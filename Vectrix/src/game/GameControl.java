@@ -11,11 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.print.DocFlavor.URL;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,6 +28,9 @@ import javax.swing.border.Border;
 
 public class GameControl extends JFrame {
 	private Board board;
+	private boolean newPuzzle = false;
+	private JButton giveUpButton;
+	private JFrame self = this;	
 	
 	public GameControl() throws IOException {
 		setSize(760, 740);
@@ -62,10 +67,12 @@ public class GameControl extends JFrame {
 		JPanel buttons = new JPanel();
 		buttons.setBackground(Color.BLACK);
 		buttons.setLayout(new GridLayout(0, 3));
+		BufferedImage img;
+		
 		
 		//Give up.
-		BufferedImage img = ImageIO.read(this.getClass().getResource("/images/giveup_label.png"));
-		JButton giveUpButton = new JButton(new ImageIcon(img));
+		img = ImageIO.read(this.getClass().getResource("/images/giveup_label.png"));
+		giveUpButton = new JButton(new ImageIcon(img));
 		giveUpButton.setBackground(Color.BLACK);
 		giveUpButton.setBorderPainted(false);
 		giveUpButton.setFocusPainted(false);
@@ -73,10 +80,18 @@ public class GameControl extends JFrame {
 		//Give up listener
 		giveUpButton.addActionListener(
 			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					board.reset();
-					board.setDrawSolution(true);
-					board.repaint();
+				public void actionPerformed(ActionEvent e){
+					if (!newPuzzle) {
+						board.reset();
+						board.setDrawSolution(true);
+						newPuzzle = true;
+						/////////////////////FINISH CHANGING IMAGE OF GIVEUPBUTTON//////////////////////////////////
+						board.repaint();
+					} else {
+						board.newPuzzle();
+						newPuzzle = false;
+						board.repaint();
+					}
 				}
 			}
 		);
@@ -89,6 +104,15 @@ public class GameControl extends JFrame {
 		hintButton.setBorderPainted(false);
 		hintButton.setFocusPainted(false);
 		hintButton.setBorder(null);
+		//hintButton listener
+		hintButton.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					board.newHint();
+					board.repaint();
+				}
+			}
+		);
 		buttons.add(hintButton);
 		
 		//Reset
