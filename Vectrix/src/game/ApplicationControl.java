@@ -28,6 +28,7 @@ public class ApplicationControl {
 	public static void main(String[] args) {
 		ApplicationControl app = new ApplicationControl();
 		app.newPuzzle();
+		app.game.getBoard().setShowInstructions(true);
 		boolean wakawaka = true;
 		while (true) {
 			while(!app.game.getBoard().getNewGame()) {
